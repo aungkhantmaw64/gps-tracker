@@ -8,10 +8,38 @@
 
 #define TIMESTAMP_DEFAULT_TIMEZONE ("ICT-7")
 
+/********************************************************************************
+ *
+ *                              Private Global Variables
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Tag used for logging messages from the timestamp module.
+ */
 static char *TAG = "timestamp";
 
+/********************************************************************************
+ *
+ *                              Private Function Prototypes
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Callback function for timestamp notifications.
+ *
+ * This function is called when a timestamp event occurs.
+ * The provided timeval structure contains the current time.
+ *
+ * @param[in] tv Pointer to a struct timeval containing the current time.
+ */
 static void timestamp_notification_cb(struct timeval *tv);
 
+/********************************************************************************
+ *
+ *                              Public Function Definitions
+ *
+ ********************************************************************************/
 esp_err_t timestamp_update_time(void) {
   time_t now;
   struct tm timeinfo;
@@ -69,6 +97,11 @@ esp_err_t timestamp_now(timestamp_t *stamp) {
   return ESP_OK;
 }
 
+/********************************************************************************
+ *
+ *                              Private Function Definitions
+ *
+ ********************************************************************************/
 static void timestamp_notification_cb(struct timeval *tv) {
   ESP_LOGI(TAG, "Notification of a time synchronization event");
 }
