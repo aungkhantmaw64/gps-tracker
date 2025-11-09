@@ -6,31 +6,105 @@
 #include "utils.h"
 #include <string.h>
 
+/**
+ * @brief Default Wi-Fi SSID used for factory configuration.
+ */
 #define NETWORK_MANAGER_FACTORY_WIFI_SSID ("gps-tracker")
+
+/**
+ * @brief Default Wi-Fi password used for factory configuration.
+ */
 #define NETWORK_MANAGER_FACTORY_WIFI_PASSWORD ("abcdefgh")
+
+/**
+ * @brief Maximum number of Wi-Fi connection retry attempts.
+ */
 #define NETWORK_MANAGER_MAXIMUM_RETRY (10)
 
+/********************************************************************************
+ *
+ *                              Type Declarations
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Event group bits for WiFi connection status.
+ */
 enum {
-  WIFI_CONNECTED_BIT = 0x01,
-  WIFI_FAIL_BIT = 0x02,
+  WIFI_CONNECTED_BIT = 0x01, /**< Bit set when WiFi is connected */
+  WIFI_FAIL_BIT = 0x02,      /**< Bit set when WiFi connection fails */
 };
 
+/**
+ * @brief Structure representing the network manager state.
+ */
 typedef struct network_manager {
-  esp_netif_t *netif;
-  wifi_config_t config;
-  EventGroupHandle_t event_group;
+  esp_netif_t *netif;             /**< Pointer to the network interface */
+  wifi_config_t config;           /**< WiFi configuration settings */
+  EventGroupHandle_t event_group; /**< Event group handle for WiFi events */
 } network_manager_t;
 
+/********************************************************************************
+ *
+ *                              Private Global Variables
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Tag used for logging messages from the network manager module.
+ */
 static char *TAG = "network_manager";
+
+/**
+ * @brief Global pointer to the network manager instance.
+ */
 static network_manager_t *g_net = NULL;
+
+/**
+ * @brief Counter for the number of WiFi connection retry attempts.
+ */
 static int8_t g_retry_count = 0;
 
+/********************************************************************************
+ *
+ *                              Private Function Prototypes
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Callback for handling WiFi events.
+ *
+ * This function is called by the ESP event loop when a WiFi-related event
+ * occurs.
+ *
+ * @param arg         User-defined argument passed to the callback.
+ * @param event_base  Event base identifier (e.g., WIFI_EVENT).
+ * @param event_id    Specific event ID (e.g., WIFI_EVENT_STA_START).
+ * @param event_data  Pointer to event-specific data.
+ */
 static void network_manager_wifi_event_cb(void *arg,
                                           esp_event_base_t event_base,
                                           int32_t event_id, void *event_data);
 
+/**
+ * @brief Callback for handling IP events.
+ *
+ * This function is called by the ESP event loop when an IP-related event
+ * occurs.
+ *
+ * @param arg         User-defined argument passed to the callback.
+ * @param event_base  Event base identifier (e.g., IP_EVENT).
+ * @param event_id    Specific event ID (e.g., IP_EVENT_STA_GOT_IP).
+ * @param event_data  Pointer to event-specific data.
+ */
 static void network_manager_ip_event_cb(void *arg, esp_event_base_t event_base,
                                         int32_t event_id, void *event_data);
+
+/********************************************************************************
+ *
+ *                              Public Function Definitions
+ *
+ ********************************************************************************/
 
 esp_err_t network_manager_init(void) {
   esp_err_t ret = nvs_flash_init();
@@ -95,6 +169,12 @@ esp_err_t network_manager_init(void) {
   }
   return ESP_OK;
 }
+
+/********************************************************************************
+ *
+ *                              Private Function Definitions
+ *
+ ********************************************************************************/
 
 static void network_manager_wifi_event_cb(void *arg,
                                           esp_event_base_t event_base,
