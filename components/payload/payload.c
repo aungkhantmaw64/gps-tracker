@@ -1,8 +1,11 @@
 #include "payload.h"
+#include "esp_check.h"
 #include "esp_log.h"
 #include "esp_random.h"
+#include "esp_sntp.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "timestamp.h"
 #include "utils.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -117,10 +120,15 @@ static void payload_task_entry(void *user_ctx) {
                        "\"id\": \"%s\",\n", UTILS_DEVICE_ID);
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset,
                        "\"payload\": \"%s\",\n", payload);
-    offset +=
-        snprintf(g_msg + offset, sizeof(g_msg) - offset, "\"date\": \"\",\n");
-    offset +=
-        snprintf(g_msg + offset, sizeof(g_msg) - offset, "\"time\": \"\",\n");
+
+    timestamp_t timestamp;
+    if (ESP_OK != timestamp_now(&timestamp)) {
+      ESP_LOGE(TAG, "Failed to get current timestamp!");
+    }
+    offset += snprintf(g_msg + offset, sizeof(g_msg) - offset,
+                       "\"date\": \"%s\",\n", timestamp.date);
+    offset += snprintf(g_msg + offset, sizeof(g_msg) - offset,
+                       "\"time\": \"%s\",\n", timestamp.time);
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset, "}\n");
 
     ESP_LOGI(TAG, "%s", g_msg);
