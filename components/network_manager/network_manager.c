@@ -63,6 +63,11 @@ esp_err_t network_manager_init(void) {
                           }};
   memcpy(&g_net->config, &config, sizeof(config));
 
+  ESP_LOGI(TAG, "******** Default Network Configuration ******");
+  ESP_LOGI(TAG, "WiFi SSID: %s", config.sta.ssid);
+  ESP_LOGI(TAG, "WiFi Password: %s", config.sta.password);
+  ESP_LOGI(TAG, "Threshold authmode: WIFI_AUTH_WPA_WPA2_PSK");
+
   ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
   ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &g_net->config));
   ESP_ERROR_CHECK(esp_wifi_set_bandwidth(ESP_IF_WIFI_STA, WIFI_BW_HT20));
@@ -83,7 +88,7 @@ esp_err_t network_manager_init(void) {
     ESP_LOGI(TAG, "connected to ap SSID:%s. password:%s.", config.sta.ssid,
              config.sta.password);
   } else if (bits & WIFI_FAIL_BIT) {
-    ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", config.sta.ssid,
+    ESP_LOGE(TAG, "failed to connect to SSID:%s, password:%s", config.sta.ssid,
              config.sta.password);
   } else {
     ESP_LOGE(TAG, "UNEXPECTED EVENT");
@@ -96,14 +101,17 @@ static void network_manager_wifi_event_cb(void *arg,
                                           int32_t event_id, void *event_data) {
   switch (event_id) {
   case WIFI_EVENT_STA_START: {
-    esp_wifi_connect();
+    ESP_LOGI(TAG, "WIFI_EVENT_STA_START!");
+    ESP_ERROR_CHECK(esp_wifi_connect());
     break;
   }
   case WIFI_EVENT_STA_DISCONNECTED: {
+    ESP_LOGE(TAG, "WIFI_EVENT_STA_DISCONNECTED!");
     if (g_retry_count < NETWORK_MANAGER_MAXIMUM_RETRY) {
-      esp_wifi_connect();
+      ESP_ERROR_CHECK(esp_wifi_connect());
       g_retry_count++;
-      ESP_LOGI(TAG, "retry to connect to the AP");
+      ESP_LOGI(TAG, "retry to connect to the AP. Total retries: %" PRIu8,
+               g_retry_count);
     } else {
       xEventGroupSetBits(g_net->event_group, WIFI_FAIL_BIT);
     }
