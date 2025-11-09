@@ -6,6 +6,7 @@ idf_component_register(
           mqtt
           nvs_flash
           network_manager
+          payload
         INCLUDE_DIRS
           "."
 )
