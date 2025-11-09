@@ -3,6 +3,7 @@
 #include "esp_netif.h"
 #include "esp_wifi.h"
 #include "nvs_flash.h"
+#include "timestamp.h"
 #include "utils.h"
 #include <string.h>
 
@@ -199,6 +200,7 @@ static void network_manager_ip_event_cb(void *arg, esp_event_base_t event_base,
     ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
     ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
     g_retry_count = 0;
+    timestamp_update_time();
     xEventGroupSetBits(g_net->event_group, WIFI_CONNECTED_BIT);
     break;
   }

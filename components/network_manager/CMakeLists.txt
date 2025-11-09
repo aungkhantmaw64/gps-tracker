@@ -7,6 +7,7 @@ idf_component_register(
           mqtt
           nvs_flash
           utils
+          timestamp
         INCLUDE_DIRS
           "include"
 )
