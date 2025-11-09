@@ -1,11 +1,12 @@
 idf_component_register(
         SRCS
-          "app_main.c"
+          "network_manager.c"
         PRIV_REQUIRES
           esp_netif
+          esp_wifi
           mqtt
           nvs_flash
-          network_manager
+          utils
         INCLUDE_DIRS
-          "."
+          "include"
 )
