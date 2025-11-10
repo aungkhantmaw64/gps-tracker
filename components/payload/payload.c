@@ -24,7 +24,8 @@
 /**
  * @brief Interval in milliseconds between payload generations.
  */
-#define PAYLOAD_GENERATION_INTERVAL_MS (5000)
+#define PAYLOAD_GENERATION_INTERVAL_MS                                         \
+  (CONFIG_GPS_TRACKER_PAYLOAD_GEN_INTERVAL_MS)
 
 /**
  * @brief Size of the payload data in bytes (LNG (4) + LAT (4) + BAT (2) + NULL

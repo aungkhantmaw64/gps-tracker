@@ -29,5 +29,11 @@ menu "GPS Tracker Configuration"
     default "mqtt://test.mosquitto.org"
     help
       Change this to your own router's password
+  
+  config GPS_TRACKER_PAYLOAD_GEN_INTERVAL_MS
+    int "Payload generation interval"
+    default 5000
+    help 
+      The unit is milliseconds
 
 endmenu
