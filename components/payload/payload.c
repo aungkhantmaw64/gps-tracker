@@ -106,9 +106,15 @@ static void payload_task_entry(void *user_ctx) {
     uint16_t lng = (uint16_t)esp_random();
     uint8_t bat_percent = (uint8_t)esp_random();
     ESP_LOGI(TAG, ">>>>>>> PAYLOAD MESSAGE <<<<<<<<");
-    ESP_LOGD(TAG, "Latitude: %" PRIu16, lat);
-    ESP_LOGD(TAG, "Logitude: %" PRIu16, lng);
-    ESP_LOGD(TAG, "Battery Percentage: %" PRIu8, bat_percent);
+
+    // Map raw 16-bit to real-world coordinates
+    float latitude = ((float)lat / 65535.0) * 180.0 - 90.0;   // -90° to +90°
+    float longitude = ((float)lng / 65535.0) * 360.0 - 180.0; // -180° to +180°
+    float battery = ((float)bat_percent / 255.0) * 100.0;     // 0-100%
+
+    ESP_LOGI(TAG, "Latitude: %.3f", latitude);
+    ESP_LOGI(TAG, "Logitude: %.3f", longitude);
+    ESP_LOGI(TAG, "Battery Percentage: %.3f", battery);
 
     char payload[PAYLOAD_DATA_SIZE] = {0};
 
@@ -129,7 +135,7 @@ static void payload_task_entry(void *user_ctx) {
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset,
                        "\"date\": \"%s\",\n", timestamp.date);
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset,
-                       "\"time\": \"%s\",\n", timestamp.time);
+                       "\"time\": \"%s\"\n", timestamp.time);
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset, "}\n");
 
     ESP_LOGI(TAG, "%s", g_msg);
