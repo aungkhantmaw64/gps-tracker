@@ -78,9 +78,11 @@ esp_err_t mqtt_mgt_init(void) {
     return ret;
   }
 
-  sprintf(g_mqtt.topic, "/egress/%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1],
-          mac[2], mac[3], mac[4], mac[5]);
+  // sprintf(g_mqtt.topic, "/egress/%02X:%02X:%02X:%02X:%02X:%02X", mac[0],
+  // mac[1],
+  //         mac[2], mac[3], mac[4], mac[5]);
 
+  sprintf(g_mqtt.topic, "/egress/ESP_01");
   ESP_LOGI(TAG, "Successfully initialized MQTT. Topic: %s", g_mqtt.topic);
   g_mqtt.initialized = true;
   g_mqtt.is_connected = false;
