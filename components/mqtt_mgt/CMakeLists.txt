@@ -1,0 +1,9 @@
+idf_component_register(
+        SRCS
+          "mqtt_mgt.c"
+        PRIV_REQUIRES
+          mqtt
+          utils
+        INCLUDE_DIRS
+          "include"
+)
