@@ -11,12 +11,12 @@
 /**
  * @brief Default Wi-Fi SSID used for factory configuration.
  */
-#define NETWORK_MANAGER_FACTORY_WIFI_SSID ("gps-tracker")
+#define NETWORK_MANAGER_FACTORY_WIFI_SSID (CONFIG_GPS_TRACKER_WIFI_SSID)
 
 /**
  * @brief Default Wi-Fi password used for factory configuration.
  */
-#define NETWORK_MANAGER_FACTORY_WIFI_PASSWORD ("abcdefgh")
+#define NETWORK_MANAGER_FACTORY_WIFI_PASSWORD (CONFIG_GPS_TRACKER_WIFI_PASSWORD)
 
 /**
  * @brief Maximum number of Wi-Fi connection retry attempts.
