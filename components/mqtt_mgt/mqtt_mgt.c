@@ -8,39 +8,109 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+/**
+ * @brief Default MQTT broker URL used for connections.
+ */
 #define MQTT_MGT_DEFAULT_BROKER_URL ("mqtt://test.mosquitto.org")
+
+/**
+ * @brief Stack size (in bytes) for the MQTT management task.
+ */
 #define MQTT_MGT_TASK_SIZE (4096)
+
+/**
+ * @brief Priority for the MQTT management task.
+ */
 #define MQTT_MGT_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
-#define MQTT_MGT_QUEUE_SIZE 10
-#define MQTT_MGT_TOPIC_MAX_LEN 64
-#define MQTT_MGT_DATA_MAX_LEN 256
+/**
+ * @brief Size of the internal MQTT message queue.
+ */
+#define MQTT_MGT_QUEUE_SIZE (10)
+
+/**
+ * @brief Maximum length (in bytes) for MQTT topic strings.
+ */
+#define MQTT_MGT_TOPIC_MAX_LEN (64)
+
+/**
+ * @brief Maximum length (in bytes) for MQTT message data.
+ */
+#define MQTT_MGT_DATA_MAX_LEN (256)
+
+/**
+ * @brief Default Quality of Service (QoS) level for MQTT messages.
+ */
 #define MQTT_MGT_DEFAULT_QOS (1)
+
+/**
+ * @brief Default retain flag for MQTT messages.
+ */
 #define MQTT_MGT_DEFAULT_RETAIN (true)
 
+/********************************************************************************
+ *
+ *                              Type Declarations
+ *
+ ********************************************************************************/
+
+/**
+ * @brief Structure representing an MQTT message.
+ *
+ * This structure holds a pointer to the message data and its length.
+ */
 typedef struct {
-  char *data;
-  size_t len;
+  char *data; /**< Pointer to the message payload. */
+  size_t len; /**< Length of the message payload in bytes. */
 } mqtt_mgt_msg_t;
 
-static char *TAG = "mqtt_mgt";
-
+/**
+ * @brief Structure for managing MQTT client state and resources.
+ *
+ * This structure encapsulates the state of the MQTT management module,
+ * including initialization status, task and queue handles, MQTT client
+ * handle, connection status, and the topic buffer.
+ */
 typedef struct {
-  bool initialized;
-  TaskHandle_t task_handle;
-  QueueHandle_t msg_queue;
-  esp_mqtt_client_handle_t mqtt_client;
-  bool is_connected;
-  char topic[MQTT_MGT_TOPIC_MAX_LEN];
+  bool initialized; /**< Indicates if the MQTT manager is initialized. */
+  TaskHandle_t task_handle; /**< Handle to the MQTT management task. */
+  QueueHandle_t msg_queue;  /**< Queue for pending MQTT messages. */
+  esp_mqtt_client_handle_t mqtt_client; /**< Handle to the ESP MQTT client. */
+  bool is_connected;                    /**< MQTT connection status flag. */
+  char topic[MQTT_MGT_TOPIC_MAX_LEN]; /**< Buffer for the MQTT topic string. */
 } mqtt_mgt_t;
 
+/********************************************************************************
+ *
+ *                              Private Global Variables
+ *
+ ********************************************************************************/
+// TAG used for logging MQTT management module messages
+static char *TAG = "mqtt_mgt";
+
+// Global instance of the MQTT management structure, zero-initialized
 static mqtt_mgt_t g_mqtt = {0};
 
+/********************************************************************************
+ *
+ *                              Private Function Prototypes
+ *
+ ********************************************************************************/
+
+// Event handler for MQTT management events.
+// Handles events received from the ESP event loop related to MQTT.
 static void mqtt_mgt_event_handler(void *handler_args, esp_event_base_t base,
                                    int32_t event_id, void *event_data);
 
+// Entry point for the MQTT management task.
+// Runs the main loop or logic for MQTT management in a separate task/thread.
 static void mqtt_mgt_task_entry(void *user_ctx);
 
+/********************************************************************************
+ *
+ *                              Public Function Definitions
+ *
+ ********************************************************************************/
 esp_err_t mqtt_mgt_init(void) {
   if (g_mqtt.initialized) {
     ESP_LOGI(TAG, "mqtt_mgt is already initialized!");
@@ -122,6 +192,11 @@ esp_err_t mqtt_mgt_queue_msg(const void *data, size_t len) {
   return ESP_OK;
 }
 
+/********************************************************************************
+ *
+ *                              Private Function Definitions
+ *
+ ********************************************************************************/
 static void mqtt_mgt_event_handler(void *handler_args, esp_event_base_t base,
                                    int32_t event_id, void *event_data) {
   ESP_LOGD(TAG,
