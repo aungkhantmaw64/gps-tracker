@@ -1,9 +1,27 @@
 menu "GPS Tracker Configuration"
 
-    config SNTP_TIME_SERVER
-        string "SNTP server name"
-        default "pool.ntp.org"
-        help
-            Hostname of the main SNTP server.
+  config GPS_TRACKER_SNTP_TIME_SERVER
+    string "SNTP server name"
+    default "pool.ntp.org"
+    help
+        Hostname of the main SNTP server.
+  
+  config GPS_TRACKER_SNTP_TIME_ZONE
+    string "SNTP time zone"
+    default "ICT-7"
+    help
+      Default time zone is Thailand
+
+  config GPS_TRACKER_WIFI_SSID
+    string "WiFi SSID"
+    default "gps-tracker"
+    help
+      Change this to your own router's SSID
+
+  config GPS_TRACKER_WIFI_PASSWORD
+    string "WiFi Password"
+    default "abcdefgh"
+    help
+      Change this to your own router's password
 
 endmenu

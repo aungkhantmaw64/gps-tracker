@@ -6,7 +6,8 @@
 #include "esp_wifi.h"
 #include "include/timestamp.h"
 
-#define TIMESTAMP_DEFAULT_TIMEZONE ("ICT-7")
+#define TIMESTAMP_DEFAULT_TIMEZONE (CONFIG_GPS_TRACKER_SNTP_TIME_ZONE)
+#define TIMESTAMP_SNTP_SERVER (CONFIG_GPS_TRACKER_SNTP_TIME_SERVER)
 
 /********************************************************************************
  *
@@ -55,7 +56,7 @@ esp_err_t timestamp_update_time(void) {
    * This is the basic default config with one server and starting the service
    */
   esp_sntp_config_t config =
-      ESP_NETIF_SNTP_DEFAULT_CONFIG(CONFIG_SNTP_TIME_SERVER);
+      ESP_NETIF_SNTP_DEFAULT_CONFIG(TIMESTAMP_SNTP_SERVER);
   config.sync_cb =
       timestamp_notification_cb; // Note: This is only needed if we want
 
