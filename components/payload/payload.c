@@ -5,6 +5,7 @@
 #include "esp_sntp.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "mqtt_mgt.h"
 #include "timestamp.h"
 #include "utils.h"
 #include <stdint.h>
@@ -132,7 +133,9 @@ static void payload_task_entry(void *user_ctx) {
     offset += snprintf(g_msg + offset, sizeof(g_msg) - offset, "}\n");
 
     ESP_LOGI(TAG, "%s", g_msg);
-
+    if (ESP_OK != mqtt_mgt_queue_msg(g_msg, strlen(g_msg))) {
+      ESP_LOGE(TAG, "Failed to queue the payload!");
+    }
     vTaskDelay(pdMS_TO_TICKS(PAYLOAD_GENERATION_INTERVAL_MS));
   }
   vTaskDelete(NULL);
