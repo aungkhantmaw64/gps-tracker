@@ -37,6 +37,19 @@
   })
 
 /**
+ * @brief  Free memory
+ *
+ * @param  ptr  Memory pointer
+ */
+#define FREE(ptr)                                                              \
+  do {                                                                         \
+    if (ptr) {                                                                 \
+      free(ptr);                                                               \
+      ptr = NULL;                                                              \
+    }                                                                          \
+  } while (0)
+
+/**
  * @brief Convert a MAC address from uint8_t array to string representation.
  *
  * @param mac_str      Output buffer for the MAC address string.
