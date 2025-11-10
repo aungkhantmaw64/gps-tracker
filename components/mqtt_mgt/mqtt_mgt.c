@@ -155,7 +155,7 @@ static void mqtt_mgt_task_entry(void *user_ctx) {
         ESP_LOGE(TAG, "NULL message!");
       }
     } else {
-      ESP_LOGI(TAG, "MQTT is not is_connected!");
+      ESP_LOGI(TAG, "MQTT is not connected!");
     }
   }
   vTaskDelete(NULL);
