@@ -2,6 +2,7 @@
 #include "esp_check.h"
 #include "esp_netif.h"
 #include "esp_wifi.h"
+#include "mqtt_mgt.h"
 #include "nvs_flash.h"
 #include "timestamp.h"
 #include "utils.h"
@@ -201,6 +202,7 @@ static void network_manager_ip_event_cb(void *arg, esp_event_base_t event_base,
     ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
     g_retry_count = 0;
     timestamp_update_time();
+    ESP_ERROR_CHECK(mqtt_mgt_init());
     xEventGroupSetBits(g_net->event_group, WIFI_CONNECTED_BIT);
     break;
   }

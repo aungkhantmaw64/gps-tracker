@@ -4,7 +4,7 @@ idf_component_register(
         PRIV_REQUIRES
           esp_netif
           esp_wifi
-          mqtt
+          mqtt_mgt
           nvs_flash
           utils
           timestamp
