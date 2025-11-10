@@ -11,7 +11,7 @@
 /**
  * @brief Default MQTT broker URL used for connections.
  */
-#define MQTT_MGT_DEFAULT_BROKER_URL ("mqtt://test.mosquitto.org")
+#define MQTT_MGT_DEFAULT_BROKER_URL (CONFIG_GPS_TRACKER_MQTT_BROKER_URL)
 
 /**
  * @brief Stack size (in bytes) for the MQTT management task.

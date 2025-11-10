@@ -5,7 +5,7 @@ menu "GPS Tracker Configuration"
     default "pool.ntp.org"
     help
         Hostname of the main SNTP server.
-  
+ 
   config GPS_TRACKER_SNTP_TIME_ZONE
     string "SNTP time zone"
     default "ICT-7"
@@ -21,6 +21,12 @@ menu "GPS Tracker Configuration"
   config GPS_TRACKER_WIFI_PASSWORD
     string "WiFi Password"
     default "abcdefgh"
+    help
+      Change this to your own router's password
+
+  config GPS_TRACKER_MQTT_BROKER_URL
+    string "MQTT broker URL"
+    default "mqtt://test.mosquitto.org"
     help
       Change this to your own router's password
 
